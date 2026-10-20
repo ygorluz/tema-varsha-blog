@@ -245,6 +245,52 @@ const relatedPosts = allPosts
 </BaseLayout>
 
 <style>
+  /* Fix: layout fluido e centralizado a 100% de zoom em qualquer tela */
+  .article-layout.article-layout--single {
+    display: block !important;
+    max-width: 860px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+  }
+
+  .article-layout.article-layout--single .article-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .article-layout:not(.article-layout--single) {
+    display: grid !important;
+    grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr) !important;
+    gap: clamp(2rem, 4vw, 3.5rem) !important;
+    align-items: start !important;
+    max-width: 1140px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+  }
+
+  .article-layout:not(.article-layout--single) .article-shell {
+    grid-column: 2 !important;
+    min-width: 0 !important;
+  }
+
+  .article-layout:not(.article-layout--single) .article-toc {
+    grid-column: 1 !important;
+  }
+
+  @media (max-width: 1040px) {
+    .article-layout,
+    .article-layout:not(.article-layout--single) {
+      display: block !important;
+      max-width: 860px !important;
+      margin: 0 auto !important;
+      width: 100% !important;
+    }
+    .article-toc {
+      display: none !important;
+    }
+  }
+
   .article-prose :global(h2) {
     font-size: clamp(1.4rem, 3vw, 1.75rem);
     font-weight: 800;
