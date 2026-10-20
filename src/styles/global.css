@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Cores definidas dinamicamente pelo BaseLayout.astro via define:vars */
+    --color-primary: 254 79 112;
+    --color-primary-dark: 32 54 86;
+    --color-accent: 255 163 135;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: rgb(var(--color-primary) / 0.15);
+    color: rgb(var(--color-primary-dark));
+  }
+}
+
+@layer components {
+  .walker-section-border {
+    @apply border-b border-gray-200;
+  }
+}
+
+
+/* Proteção global de tamanho de logo */
+.navbar-brand img {
+  max-height: 48px !important;
+  width: auto !important;
+  max-width: 220px !important;
+  object-fit: contain !important;
+  display: inline-block !important;
+}
+
+.canvas-menu .logo img {
+  max-height: 48px !important;
+  width: auto !important;
+  max-width: 180px !important;
+  object-fit: contain !important;
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+.widget-about img {
+  max-height: 60px !important;
+  width: auto !important;
+  max-width: 180px !important;
+  object-fit: contain !important;
+  margin: 0 auto !important;
+  display: block !important;
+}

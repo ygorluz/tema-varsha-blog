@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { readData } from '../lib/readData';
+const sobreData = readData('sobre.json');
+const siteConfig = readData('siteConfig.json');
+---
+
+<BaseLayout
+  title={sobreData.seo?.title || "Sobre Nós"}
+  description={sobreData.seo?.description}
+  image={sobreData.seo?.image}
+>
+  <main class="content-shell" style="padding-top: 48px; padding-bottom: 80px;">
+    
+    <!-- Breadcrumb & Header -->
+    <div style="margin-bottom: 40px; border-bottom: 1px solid var(--line); padding-bottom: 24px;">
+      <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin-bottom: 8px;">
+        <a href="/" style="color: var(--muted); text-decoration: none;">Início</a> &sol; <span style="color: var(--ink);">Sobre</span>
+      </div>
+      <h1 style="font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.03em;">
+        {sobreData.seo?.title || "Sobre o Varsha"}
+      </h1>
+      <p style="font-size: 1.15rem; color: var(--muted); line-height: 1.6; max-width: 780px; margin: 0;">
+        {sobreData.hero?.title}
+      </p>
+    </div>
+
+    <!-- Main Grid -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 48px; align-items: start;" class="about-grid">
+      <div style="min-width: 0;">
+        {sobreData.hero?.image && (
+          <img
+            src={sobreData.hero.image}
+            alt={siteConfig.name}
+            style="width: 100%; height: 380px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 32px;"
+          />
+        )}
+
+        <div style="color: var(--ink); font-size: 1.05rem; line-height: 1.8; display: flex; flex-direction: column; gap: 24px;">
+          {sobreData.hero?.desc && (
+            <p style="margin: 0; font-size: 1.15rem; color: var(--ink); font-weight: 500;">
+              {sobreData.hero.desc}
+            </p>
+          )}
+
+          {sobreData.content?.missionTitle && (
+            <section style="background: var(--bg-elevated); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 8px; padding: 24px 28px;">
+              <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--ink); margin: 0 0 12px; letter-spacing: -0.02em;">
+                {sobreData.content.missionTitle}
+              </h2>
+              <p style="margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.7;">
+                {sobreData.content.missionText}
+              </p>
+            </section>
+          )}
+
+          {sobreData.content?.teamTitle && (
+            <section style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 24px 28px;">
+              <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--ink); margin: 0 0 12px; letter-spacing: -0.02em;">
+                {sobreData.content.teamTitle}
+              </h2>
+              <p style="margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.7;">
+                {sobreData.content.teamText}
+              </p>
+            </section>
+          )}
+        </div>
+      </div>
+
+      <Sidebar />
+    </div>
+
+  </main>
+</BaseLayout>
+
+<style>
+  @media (min-width: 992px) {
+    .about-grid {
+      grid-template-columns: 2fr 1fr !important;
+    }
+  }
+</style>

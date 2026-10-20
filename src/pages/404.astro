@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Página Não Encontrada" description="Erro 404 — A página solicitada não foi encontrada.">
+  <main class="content-shell" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 24px;">
+    <div style="font-family: var(--mono); font-size: clamp(4rem, 10vw, 7rem); font-weight: 900; color: var(--accent); line-height: 1; margin-bottom: 16px;">
+      404
+    </div>
+    <h1 style="font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.02em;">
+      Página não encontrada
+    </h1>
+    <p style="font-size: 1.05rem; color: var(--muted); max-width: 480px; margin: 0 0 32px; line-height: 1.6;">
+      O artigo ou página que você procurou não existe, foi movido ou seu endereço foi digitado incorretamente.
+    </p>
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+      <a href="/" style="background: var(--ink); color: var(--bg); font-weight: 700; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 0.95rem;">
+        Voltar à Página Inicial
+      </a>
+      <a href="/blog" style="border: 1px solid var(--line); color: var(--ink); font-weight: 600; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 0.95rem; background: var(--bg-elevated);">
+        Explorar Arquivo de Posts
+      </a>
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,200 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogCard from '../components/varsha/BlogCard.astro';
+import { getCollection } from 'astro:content';
+import { readData } from '../lib/readData';
+import { getCategorySlug, getCategoryName, normalizeCategories } from '../lib/categorySlug';
+
+const siteConfig = readData('siteConfig.json');
+const homeConfig = readData('home.json');
+const categoriesData = readData('categories.json', []);
+
+const posts = (await getCollection('blog'))
+  .filter(p => !p.data.draft)
+  .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+
+const [featuredPost, ...otherPosts] = posts;
+const latestLimit = homeConfig.latestPosts?.limit ?? 6;
+const latestPosts = otherPosts.slice(0, latestLimit);
+
+const allCategories = normalizeCategories(categoriesData);
+
+const hero = homeConfig.hero || {
+  eyebrow: "✦ Editorial & Tech Blog",
+  title: "Ideias, design e engenharia para a nova era digital.",
+  subtitle: "Artigos em profundidade sobre inteligência artificial, interfaces de alta performance, design systems e futuro do desenvolvimento web.",
+  primaryCta: { text: "Explorar Artigos", href: "/blog" },
+  secondaryCta: { text: "Sobre o Projeto", href: "/sobre" }
+};
+
+const newsletter = homeConfig.newsletter || {
+  title: "Fique à frente das tendências",
+  description: "Receba curadorias exclusivas, análises aprofundadas e insights semanais direto no seu e-mail.",
+  placeholder: "seu@email.com",
+  buttonText: "Assinar Gratuitamente"
+};
+
+const features = homeConfig.features || [
+  { icon: "terminal", title: "Análises Técnicas", desc: "Estudos de caso reais de arquitetura de software, DevOps e engenharia de prompts." },
+  { icon: "palette", title: "Design Systems", desc: "Acessibilidade, micro-interações, tipografia e tokens de design para produtos digitais." },
+  { icon: "cpu", title: "Inteligência Artificial", desc: "O impacto prático dos modelos de linguagem e agentes autônomos no mercado de trabalho." }
+];
+---
+
+<BaseLayout title={siteConfig.name} description={siteConfig.description}>
+  <main class="content-shell">
+    
+    {/* Hero Section */}
+    <section class="page-hero" style="text-align: center; max-width: 840px; margin: 48px auto 64px;">
+      {hero.eyebrow && (
+        <p class="eyebrow" style="margin-bottom: 16px;">
+          <span class="status-dot dot-working"></span>
+          {hero.eyebrow}
+        </p>
+      )}
+      <h1 style="font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.03em; margin: 0 0 20px; color: var(--ink);">
+        {hero.title}
+      </h1>
+      {hero.subtitle && (
+        <p class="hero-lede" style="font-size: 1.15rem; color: var(--muted); line-height: 1.6; margin: 0 auto 32px; max-width: 680px;">
+          {hero.subtitle}
+        </p>
+      )}
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+        {hero.primaryCta && (
+          <a class="nav-cta" href={hero.primaryCta.href} style="padding: 12px 24px; font-size: 0.95rem;">
+            {hero.primaryCta.text}
+          </a>
+        )}
+        {hero.secondaryCta && (
+          <a href={hero.secondaryCta.href} style="display: inline-flex; align-items: center; padding: 12px 24px; font-size: 0.95rem; font-weight: 600; color: var(--ink); border: 1px solid var(--line-strong); border-radius: var(--radius-md); text-decoration: none; transition: background 0.15s, border-color 0.15s;" class="hover-bg">
+            {hero.secondaryCta.text}
+          </a>
+        )}
+      </div>
+    </section>
+
+    {/* Categories Bar */}
+    {allCategories.length > 0 && (
+      <section style="margin-bottom: 48px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 16px 0;">
+        <div style="display: flex; align-items: center; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">
+          <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--muted-2); letter-spacing: 0.05em; white-space: nowrap; margin-right: 6px;">
+            Editorias:
+          </span>
+          <a href="/blog" class="tag-pill" style="font-weight: 600;">Todos</a>
+          {allCategories.map(cat => (
+            <a href={`/categoria/${getCategorySlug(cat)}`} class="tag-pill">
+              {getCategoryName(cat)}
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {/* Featured Post (Destaque Principal) */}
+    {featuredPost && (
+      <section style="margin-bottom: 64px;" aria-labelledby="featured-heading">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent);">
+              Em Evidência
+            </span>
+            <h2 id="featured-heading" style="font-size: 1.8rem; font-weight: 800; margin: 4px 0 0; color: var(--ink); letter-spacing: -0.02em;">
+              {homeConfig.sectionTitles?.featured || "Destaque da Semana"}
+            </h2>
+          </div>
+        </div>
+
+        <BlogCard post={featuredPost} featured={true} />
+      </section>
+    )}
+
+    {/* Latest Posts Grid */}
+    {latestPosts.length > 0 && (
+      <section style="margin-bottom: 80px;" aria-labelledby="latest-heading">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px;">
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent);">
+              Atualizações
+            </span>
+            <h2 id="latest-heading" style="font-size: 1.8rem; font-weight: 800; margin: 4px 0 0; color: var(--ink); letter-spacing: -0.02em;">
+              {homeConfig.sectionTitles?.latestPosts || "Últimos Artigos"}
+            </h2>
+          </div>
+          <a href="/blog" style="font-size: 0.9rem; font-weight: 600; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 4px;">
+            <span>Ver arquivo completo</span>
+            <span>→</span>
+          </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px;">
+          {latestPosts.map(post => (
+            <BlogCard post={post} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {/* Newsletter Section */}
+    <section style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 56px 32px; text-align: center; margin-bottom: 80px;">
+      <div style="max-width: 600px; margin: 0 auto;">
+        <span style="display: inline-block; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; background: var(--accent-soft); color: var(--accent); border-radius: 999px; margin-bottom: 16px;">
+          Newsletter
+        </span>
+        <h2 style="font-size: 2rem; font-weight: 800; margin: 0 0 12px; color: var(--ink); letter-spacing: -0.02em;">
+          {newsletter.title}
+        </h2>
+        <p style="font-size: 1rem; color: var(--muted); line-height: 1.6; margin: 0 0 28px;">
+          {newsletter.description}
+        </p>
+
+        <form style="display: flex; gap: 10px; max-width: 460px; margin: 0 auto; flex-wrap: wrap;" onsubmit="event.preventDefault(); alert('Inscrição confirmada com sucesso!');">
+          <input
+            type="email"
+            required
+            placeholder={newsletter.placeholder || "seu@email.com"}
+            style="flex: 1; min-width: 240px; padding: 12px 16px; border: 1px solid var(--line-strong); background: var(--bg); color: var(--ink); border-radius: var(--radius-md); font-size: 0.95rem; outline: none;"
+          />
+          <button
+            type="submit"
+            class="nav-cta"
+            style="padding: 12px 24px; font-size: 0.95rem; cursor: pointer; border: none;"
+          >
+            {newsletter.buttonText || "Assinar"}
+          </button>
+        </form>
+      </div>
+    </section>
+
+    {/* Features / Editorial Pillars */}
+    {features.length > 0 && (
+      <section style="margin-bottom: 64px;">
+        <div style="text-align: center; margin-bottom: 40px;">
+          <h2 style="font-size: 1.8rem; font-weight: 800; margin: 0 0 10px; color: var(--ink); letter-spacing: -0.02em;">
+            Pilares da Nossa Redação
+          </h2>
+          <p style="font-size: 1rem; color: var(--muted); margin: 0;">
+            O compromisso editorial do {siteConfig.name} com a comunidade de criadores e engenheiros.
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+          {features.map((f: any) => (
+            <div style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 32px 24px;">
+              <div style="width: 44px; height: 44px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; font-family: var(--mono);">
+                #
+              </div>
+              <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0 0 10px; color: var(--ink);">
+                {f.title}
+              </h3>
+              <p style="font-size: 0.92rem; color: var(--muted); line-height: 1.6; margin: 0;">
+                {f.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+  </main>
+</BaseLayout>

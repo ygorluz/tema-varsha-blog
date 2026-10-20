@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/varsha/BlogCard.astro';
+import { getCollection } from 'astro:content';
+import { readData } from '../../lib/readData';
+import { getCategorySlug, getCategoryName, normalizeCategories } from '../../lib/categorySlug';
+
+const siteConfig = readData('siteConfig.json');
+const categoriesData = readData('categories.json', []);
+const allCategories = normalizeCategories(categoriesData);
+
+const posts = (await getCollection('blog'))
+  .filter(p => !p.data.draft)
+  .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+---
+
+<BaseLayout title={`Blog — ${siteConfig.name}`} description="Arquivo completo de artigos, tutoriais e análises.">
+  <main class="content-shell">
+    
+    {/* Page Header */}
+    <section class="page-hero page-hero-compact" style="margin: 40px auto 48px;">
+      <p class="eyebrow"><span class="status-dot dot-working"></span>Arquivo Editorial</p>
+      <h1 style="font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 800; color: var(--ink); letter-spacing: -0.025em; margin: 0 0 12px;">
+        Todos os Artigos
+      </h1>
+      <p class="hero-lede" style="font-size: 1.1rem; color: var(--muted); margin: 0 0 24px;">
+        Explore nosso acervo completo de análises, ensaios e guias técnicos.
+      </p>
+
+      {/* Category Filter Pills */}
+      {allCategories.length > 0 && (
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px;">
+          <a href="/blog" class="tag-pill" style="font-weight: 700; border-color: var(--accent); color: var(--accent);">
+            Todos ({posts.length})
+          </a>
+          {allCategories.map(cat => {
+            const count = posts.filter(p => p.data.category === cat || p.data.category === getCategoryName(cat)).length;
+            return (
+              <a href={`/categoria/${getCategorySlug(cat)}`} class="tag-pill">
+                {getCategoryName(cat)} {count > 0 ? `(${count})` : ''}
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </section>
+
+    {/* Posts Grid */}
+    <section class="section" style="padding-top: 0;" aria-label="Lista de artigos">
+      {posts.length > 0 ? (
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px;">
+          {posts.map(post => (
+            <BlogCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <div style="text-align: center; padding: 64px 20px; background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg);">
+          <p style="color: var(--muted); font-size: 1.1rem; margin-bottom: 16px;">Nenhum artigo publicado no momento.</p>
+          <a href="/" class="nav-cta">Voltar para o início</a>
+        </div>
+      )}
+    </section>
+
+  </main>
+</BaseLayout>

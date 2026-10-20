@@ -1,0 +1,18 @@
+{
+    "seo": {
+        "title": "Sobre o Varsha Editorial",
+        "description": "Uma publicação digital independente focada em tecnologia, engenharia de software e inteligência artificial.",
+        "image": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&auto=format&fit=crop&q=80"
+    },
+    "hero": {
+        "title": "Jornalismo técnico e ensaios profundos sobre o futuro da computação.",
+        "image": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&auto=format&fit=crop&q=80",
+        "desc": "O Varsha Editorial foi criado para desenvolvedores, arquitetos de software e entusiastas de inteligência artificial que buscam profundidade, rigor analítico e clareza. Fugimos das manchetes superficiais para construir um arquivo duradouro de conhecimento e reflexão técnica."
+    },
+    "content": {
+        "missionTitle": "Nossa Proposta Editorial",
+        "missionText": "Acreditamos que a tecnologia mais impactante exige pensamento crítico. Nossos ensaios exploram arquiteturas escaláveis, novos paradigmas de IA e as implicações sociais e econômicas do software moderno. Cada artigo passa por revisão técnica e busca entregar insights práticos e duradouros.",
+        "teamTitle": "Corpo Editorial & Contribuidores",
+        "teamText": "Nossa equipe reúne engenheiros de software, pesquisadores em aprendizado de máquina e designers de produto com experiência em empresas globais e ecossistemas open source. Valorizamos a experiência prática de quem constrói e opera sistemas no mundo real."
+    }
+}

@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/varsha/BlogCard.astro';
+import { getCollection } from 'astro:content';
+import { readData } from '../../lib/readData';
+import { getCategorySlug, getCategoryName, normalizeCategories } from '../../lib/categorySlug';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const categoriesData = readData('categories.json', []);
+  const allCategories = normalizeCategories(categoriesData);
+
+  const categoriesFromPosts = [...new Set(posts.map(p => p.data.category).filter(Boolean))];
+  const combined = [...new Set([...allCategories.map(c => getCategoryName(c)), ...categoriesFromPosts])];
+
+  return combined.map(cat => ({
+    params: { categoria: getCategorySlug(cat) },
+    props: { categoryName: cat }
+  }));
+}
+
+const { categoryName } = Astro.props;
+const siteConfig = readData('siteConfig.json');
+
+const posts = (await getCollection('blog'))
+  .filter(p => !p.data.draft && (p.data.category === categoryName || getCategorySlug(p.data.category || '') === getCategorySlug(categoryName)))
+  .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+---
+
+<BaseLayout
+  title={`${categoryName} — ${siteConfig.name}`}
+  description={`Artigos e publicações sobre ${categoryName} no ${siteConfig.name}.`}
+>
+  <main class="content-shell">
+    
+    <section class="page-hero page-hero-compact" style="margin: 40px auto 48px;">
+      <p class="eyebrow"><span class="status-dot dot-working"></span>Editoria</p>
+      <h1 style="font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 800; color: var(--ink); letter-spacing: -0.025em; margin: 0 0 12px;">
+        {categoryName}
+      </h1>
+      <p class="hero-lede" style="font-size: 1.1rem; color: var(--muted); margin: 0 0 24px;">
+        {posts.length} {posts.length === 1 ? 'artigo encontrado' : 'artigos encontrados'} nesta categoria.
+      </p>
+
+      <div>
+        <a href="/blog" class="tag-pill" style="font-weight: 600;">← Ver todas as categorias</a>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 0;" aria-label="Artigos da categoria">
+      {posts.length > 0 ? (
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px;">
+          {posts.map(post => (
+            <BlogCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <div style="text-align: center; padding: 64px 20px; background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg);">
+          <p style="color: var(--muted); font-size: 1.1rem; margin-bottom: 16px;">Nenhum artigo encontrado nesta categoria.</p>
+          <a href="/blog" class="nav-cta">Voltar para o blog</a>
+        </div>
+      )}
+    </section>
+
+  </main>
+</BaseLayout>

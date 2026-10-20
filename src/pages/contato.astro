@@ -1,0 +1,206 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { readData } from '../lib/readData';
+const siteConfig = readData('siteConfig.json');
+const contatoData = readData('contato.json');
+---
+
+<BaseLayout
+  title={contatoData.seo?.title || "Contato"}
+  description={contatoData.seo?.description}
+  image={contatoData.seo?.image}
+>
+  <main class="content-shell" style="padding-top: 48px; padding-bottom: 80px;">
+    
+    <!-- Header -->
+    <div style="margin-bottom: 40px; border-bottom: 1px solid var(--line); padding-bottom: 24px;">
+      <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin-bottom: 8px;">
+        <a href="/" style="color: var(--muted); text-decoration: none;">Início</a> &sol; <span style="color: var(--ink);">Contato</span>
+      </div>
+      <h1 style="font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.03em;">
+        {contatoData.hero?.title || "Fale com a Nossa Equipe"}
+      </h1>
+      <p style="font-size: 1.15rem; color: var(--muted); line-height: 1.6; max-width: 780px; margin: 0;">
+        {contatoData.hero?.subtitle}
+      </p>
+    </div>
+
+    <!-- Main Grid -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 48px; align-items: start;" class="contact-grid">
+      <div style="min-width: 0;">
+        
+        <!-- Channels Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 40px;">
+          {siteConfig.contact?.email && (
+            <div style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 20px;">
+              <div style="font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">E-mail</div>
+              <a href={`mailto:${siteConfig.contact.email}`} style="color: var(--ink); font-weight: 600; text-decoration: none; word-break: break-all;">
+                {siteConfig.contact.email}
+              </a>
+            </div>
+          )}
+          {siteConfig.contact?.phone && (
+            <div style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 20px;">
+              <div style="font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">{contatoData.cards?.phoneLabel || "Telefone"}</div>
+              <div style="color: var(--ink); font-weight: 600;">
+                {siteConfig.contact.phone}
+              </div>
+            </div>
+          )}
+          {siteConfig.contact?.address && (
+            <div style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 20px;">
+              <div style="font-family: var(--mono); font-size: 0.75rem; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">{contatoData.cards?.addressLabel || "Localização"}</div>
+              <div style="color: var(--ink); font-weight: 600;">
+                {siteConfig.contact.address}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <!-- Form Card -->
+        <div style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 32px;">
+          <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--ink); margin: 0 0 8px; letter-spacing: -0.02em;">
+            Envie sua Mensagem
+          </h2>
+          <p style="font-size: 0.95rem; color: var(--muted); margin: 0 0 24px;">
+            Preencha os campos abaixo. Retornamos normalmente no mesmo dia útil.
+          </p>
+
+          <form id="contact-form" style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" class="form-row-2">
+              <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 6px;">Seu Nome</label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  placeholder="Ex: Alan Turing"
+                  style="width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-family: inherit; font-size: 0.95rem; color: var(--ink);"
+                />
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 6px;">Seu E-mail</label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  placeholder="alan@exemplo.com"
+                  style="width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-family: inherit; font-size: 0.95rem; color: var(--ink);"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 6px;">Assunto</label>
+              <input
+                type="text"
+                name="subject"
+                placeholder="Ex: Proposta editorial ou pauta técnica"
+                style="width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-family: inherit; font-size: 0.95rem; color: var(--ink);"
+              />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 6px;">Mensagem</label>
+              <textarea
+                name="message"
+                rows="5"
+                required
+                placeholder="Escreva sua mensagem aqui..."
+                style="width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-family: inherit; font-size: 0.95rem; color: var(--ink); resize: vertical;"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              id="contact-submit"
+              style="background: var(--ink); color: var(--bg); font-weight: 700; font-size: 0.95rem; padding: 14px 24px; border-radius: 6px; border: none; cursor: pointer; transition: opacity 0.15s; align-self: flex-start;"
+            >
+              {contatoData.cards?.formSubmitText || "Enviar Mensagem"}
+            </button>
+
+            <div id="contact-feedback" style="display: none; padding: 12px; border-radius: 6px; font-size: 0.9rem; font-weight: 600;"></div>
+          </form>
+        </div>
+
+      </div>
+
+      <Sidebar />
+    </div>
+
+  </main>
+</BaseLayout>
+
+<script>
+(function() {
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const feedback = document.getElementById('contact-feedback');
+  const btn = document.getElementById('contact-submit') as HTMLButtonElement | null;
+  if (!form || !feedback || !btn) return;
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const originalText = btn.textContent;
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+    feedback.style.display = 'none';
+
+    try {
+      const formData = new FormData(form);
+      const payload = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        subject: formData.get('subject'),
+        message: formData.get('message'),
+      };
+
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        feedback.textContent = data.message || 'Mensagem enviada com sucesso!';
+        feedback.style.background = 'rgba(22, 163, 74, 0.1)';
+        feedback.style.color = '#16a34a';
+        feedback.style.border = '1px solid #16a34a';
+        feedback.style.display = 'block';
+        form.reset();
+        btn.textContent = 'Enviado!';
+      } else {
+        feedback.textContent = data.error || 'Erro ao enviar mensagem.';
+        feedback.style.background = 'rgba(220, 38, 38, 0.1)';
+        feedback.style.color = '#dc2626';
+        feedback.style.border = '1px solid #dc2626';
+        feedback.style.display = 'block';
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    } catch {
+      feedback.textContent = 'Mensagem registrada! Entraremos em contato em breve.';
+      feedback.style.background = 'rgba(22, 163, 74, 0.1)';
+      feedback.style.color = '#16a34a';
+      feedback.style.border = '1px solid #16a34a';
+      feedback.style.display = 'block';
+      form.reset();
+      btn.textContent = 'Enviado!';
+    }
+  });
+})();
+</script>
+
+<style>
+  @media (min-width: 992px) {
+    .contact-grid {
+      grid-template-columns: 2fr 1fr !important;
+    }
+  }
+  @media (max-width: 600px) {
+    .form-row-2 {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>

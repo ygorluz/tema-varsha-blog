@@ -1,0 +1,38 @@
+{
+  "name": "Varsha Editorial",
+  "description": "Artigos em profundidade, ensaios e tutoriais sobre tecnologia, inteligência artificial, design systems e futuro digital.",
+  "url": "https://varsha.blog",
+  "author": "Redação Varsha",
+  "language": "pt-BR",
+  "logo": "",
+  "theme": {
+    "palette": "tokyo-night",
+    "primary": "#4a9eff",
+    "accent": "#7aa2f7",
+    "font": "inter",
+    "dark": "#0c0c0b"
+  },
+  "social": {
+    "instagram": "https://instagram.com",
+    "twitter": "https://twitter.com",
+    "facebook": "",
+    "pinterest": "",
+    "youtube": "https://youtube.com",
+    "github": "https://github.com/ygorluz"
+  },
+  "contact": {
+    "email": "contato@varsha.blog",
+    "phone": "+55 11 98888-7777",
+    "address": "Av. Paulista, 1000 — São Paulo, SP",
+    "name": "Varsha Editorial & Media"
+  },
+  "legal": {
+    "terms_last_updated": "20 de Outubro de 2026",
+    "privacy_last_updated": "20 de Outubro de 2026"
+  },
+  "footer": {
+    "description": "Varsha é uma publicação editorial independente dedicada a analisar o impacto da tecnologia, design de produtos e engenharia de software na sociedade moderna.",
+    "copyright": "Todos os direitos reservados à Varsha Media."
+  },
+  "favicon": "/assets/favicon.svg"
+}

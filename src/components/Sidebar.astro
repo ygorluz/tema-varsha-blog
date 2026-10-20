@@ -1,0 +1,168 @@
+---
+import { getCategorySlug, getCategoryName } from '../lib/categorySlug';
+import { BLOG_BASE } from '../lib/postUrl';
+import { getCollection } from 'astro:content';
+import { readData } from '../lib/readData';
+const categoriesData = readData('categories.json', []);
+const siteConfig = readData('siteConfig.json');
+
+const pluginsConfig = readData('pluginsConfig.json', {}) as any;
+const sidebarConfig = pluginsConfig?.emailList?.sidebar;
+const sidebarEnabled = sidebarConfig?.enabled !== false;
+const sidebarHeadline = sidebarConfig?.headline || 'Newsletter Editorial';
+const sidebarSub = sidebarConfig?.subheadline || 'Receba ensaios e análises exclusivas direto no seu e-mail.';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const finalCategoriesData = Array.isArray(categoriesData) ? categoriesData : [];
+const categoriesFromPosts = [...new Set(posts.map(p => p.data.category).filter(Boolean))];
+const allCategories = finalCategoriesData.length > 0 ? finalCategoriesData : categoriesFromPosts;
+
+const popularPosts = posts.slice(0, 5);
+
+// Contagem de posts por categoria
+const categoryCounts = allCategories.map(cat => {
+  const catName = typeof cat === 'string' ? cat : (cat?.name || '');
+  return {
+    name: catName,
+    count: posts.filter(p => (p.data.category || '').toLowerCase() === catName.toLowerCase()).length
+  };
+});
+---
+
+<aside class="varsha-sidebar" style="display: flex; flex-direction: column; gap: 24px;">
+
+  <!-- Widget Sobre -->
+  <div class="sidebar-card" style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 24px;">
+    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px;">Sobre a Publicação</div>
+    {siteConfig.logo ? (
+      <img src={siteConfig.logo} alt={siteConfig.name} style="max-height: 40px; width: auto; object-fit: contain; margin-bottom: 12px;" />
+    ) : (
+      <h4 style="font-size: 1.15rem; font-weight: 700; color: var(--ink); margin: 0 0 8px; letter-spacing: -0.01em;">{siteConfig.name}</h4>
+    )}
+    <p style="font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin: 0 0 16px;">
+      {siteConfig.description}
+    </p>
+    <a href="/sobre" style="font-size: 0.82rem; font-weight: 600; color: var(--accent); text-decoration: none;">Conheça nossa equipe &rarr;</a>
+  </div>
+
+  <!-- Widget Newsletter -->
+  {sidebarEnabled && (
+    <div class="sidebar-card" style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 24px;">
+      <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px;">{sidebarHeadline}</div>
+      <p style="font-size: 0.88rem; color: var(--muted); line-height: 1.5; margin: 0 0 16px;">
+        {sidebarSub}
+      </p>
+      <form id="sidebar-newsletter-form" style="display: flex; flex-direction: column; gap: 10px;">
+        <input
+          id="sidebar-newsletter-input"
+          type="email"
+          placeholder="Seu e-mail principal"
+          required
+          style="background: var(--bg); border: 1px solid var(--line); color: var(--ink); border-radius: 6px; padding: 10px 14px; font-family: inherit; font-size: 0.88rem; width: 100%; box-sizing: border-box;"
+        />
+        <button
+          type="submit"
+          style="background: var(--ink); color: var(--bg); font-weight: 600; font-size: 0.88rem; padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer; transition: opacity 0.15s;"
+        >
+          Inscrever-se
+        </button>
+      </form>
+      <p id="sidebar-newsletter-msg" style="display:none; text-align:center; margin: 8px 0 0; font-size: 0.8rem; font-weight: 600;"></p>
+    </div>
+  )}
+
+  <!-- Widget Posts Populares -->
+  <div class="sidebar-card" style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 24px;">
+    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 16px; border-bottom: 1px solid var(--line); padding-bottom: 8px;">
+      Mais Lidos
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      {popularPosts.map((post, i) => (
+        <a href={`${BLOG_BASE}/${post.slug}`} style="display: flex; gap: 14px; text-decoration: none; align-items: flex-start; group: hover;">
+          <span style="font-family: var(--mono); font-size: 1.1rem; font-weight: 700; color: var(--muted-2); min-width: 24px; line-height: 1;">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <div style="flex: 1;">
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; transition: color 0.15s;">
+              {post.data.title}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--muted); font-family: var(--mono);">
+              {post.data.pubDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- Widget Categorias -->
+  <div class="sidebar-card" style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 24px;">
+    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 16px; border-bottom: 1px solid var(--line); padding-bottom: 8px;">
+      Editorias
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      {categoryCounts.map(cat => (
+        <a
+          href={`/categoria/${getCategorySlug(cat.name)}`}
+          style="display: flex; justify-content: space-between; align-items: center; text-decoration: none; font-size: 0.88rem; color: var(--ink); padding: 6px 0; border-bottom: 1px dashed var(--line);"
+        >
+          <span>{cat.name}</span>
+          <span style="font-family: var(--mono); font-size: 0.75rem; color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 1px 8px;">
+            {cat.count}
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+
+</aside>
+
+<script>
+(function() {
+  document.getElementById('sidebar-newsletter-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const input = document.getElementById('sidebar-newsletter-input') as HTMLInputElement | null;
+    const btn = (e.currentTarget as HTMLFormElement).querySelector('button[type="submit"]') as HTMLButtonElement | null;
+    const msg = document.getElementById('sidebar-newsletter-msg') as HTMLElement | null;
+    const email = input?.value?.trim();
+    if (!email || !btn || !msg) return;
+
+    const originalText = btn.textContent;
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+    msg.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'sidebar' }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        msg.textContent = data.message || 'Inscrito com sucesso!';
+        msg.style.color = 'var(--accent, #16a34a)';
+        msg.style.display = 'block';
+        if (input) input.value = '';
+        btn.textContent = 'Inscrito!';
+      } else {
+        msg.textContent = data.error || 'Erro ao inscrever.';
+        msg.style.color = '#dc2626';
+        msg.style.display = 'block';
+        btn.textContent = originalText ?? 'Inscrever-se';
+        btn.disabled = false;
+      }
+    } catch {
+      msg.textContent = 'Erro de rede. Tente novamente.';
+      msg.style.color = '#dc2626';
+      msg.style.display = 'block';
+      btn.textContent = originalText ?? 'Inscrever-se';
+      btn.disabled = false;
+    }
+  });
+})();
+</script>

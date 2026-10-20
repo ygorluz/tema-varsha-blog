@@ -1,0 +1,20 @@
+[
+  {
+    "id": "yethikrishna",
+    "name": "Yethi Krishna",
+    "role": "Lead Architect & Founder",
+    "avatar": "/assets/author-yethikrishna.png",
+    "bio": "Engenheiro de software e designer de produtos, apaixonado por interfaces minimalistas, performance web e código limpo.",
+    "instagram": "https://instagram.com",
+    "email": "contato@varsha.blog"
+  },
+  {
+    "id": "redacao",
+    "name": "Redação Varsha",
+    "role": "Equipe Editorial",
+    "avatar": "/assets/logo.svg",
+    "bio": "Curadoria coletiva de notícias, ensaios e análises técnicas sobre o ecossistema moderno da web e IA.",
+    "instagram": "https://instagram.com",
+    "email": "redacao@varsha.blog"
+  }
+]

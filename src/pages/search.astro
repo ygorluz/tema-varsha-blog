@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getCollection } from 'astro:content';
+import { BLOG_BASE } from '../lib/postUrl';
+
+const posts = (await getCollection('blog'))
+    .filter(p => !p.data.draft)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const items = posts.map(p => ({
+    slug: p.slug,
+    title: p.data.title,
+    description: p.data.description || '',
+    heroImage: p.data.heroImage || '',
+    category: p.data.category || '',
+    pubDate: p.data.pubDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }),
+}));
+---
+
+<BaseLayout title="Buscar Artigos" description="Encontre artigos, ensaios e tutoriais no acervo.">
+  <main class="content-shell" style="padding-top: 48px; padding-bottom: 80px;">
+
+    <!-- Header -->
+    <div style="margin-bottom: 36px; border-bottom: 1px solid var(--line); padding-bottom: 24px;">
+      <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin-bottom: 8px;">
+        <a href="/" style="color: var(--muted); text-decoration: none;">Início</a> &sol; <span style="color: var(--ink);">Busca</span>
+      </div>
+      <h1 style="font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.03em;">
+        Buscar no Arquivo
+      </h1>
+      
+      <!-- Search Input Form -->
+      <form id="search-form" style="display: flex; gap: 12px; max-width: 640px;">
+        <input
+          id="q-input"
+          type="search"
+          name="q"
+          placeholder="Digite palavras-chave (ex: rust, react, arquitetura)..."
+          style="flex: 1; background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 6px; padding: 12px 16px; font-family: inherit; font-size: 1rem; color: var(--ink);"
+        />
+        <button
+          type="submit"
+          style="background: var(--ink); color: var(--bg); font-weight: 700; padding: 12px 24px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.95rem;"
+        >
+          Buscar
+        </button>
+      </form>
+      <div id="result-info" style="font-family: var(--mono); font-size: 0.85rem; color: var(--muted); margin-top: 12px;"></div>
+    </div>
+
+    <!-- Main Grid -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 48px; align-items: start;" class="search-grid">
+      <div style="min-width: 0;">
+        <div id="search-results" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;"></div>
+        
+        <div id="empty-state" style="display:none; background: var(--bg-elevated); border: 1px dashed var(--line); border-radius: 8px; padding: 48px 24px; text-align: center;">
+          <p style="color: var(--muted); font-size: 1.05rem; margin: 0;">Nenhum artigo encontrado para o termo pesquisado.</p>
+        </div>
+      </div>
+
+      <Sidebar />
+    </div>
+
+  </main>
+
+  <script id="search-data" type="application/json" set:html={JSON.stringify(items)} />
+  <script type="module" define:vars={{ blogBase: BLOG_BASE }}>
+    const items = JSON.parse(document.getElementById('search-data').textContent || '[]');
+    const $results = document.getElementById('search-results');
+    const $empty = document.getElementById('empty-state');
+    const $info = document.getElementById('result-info');
+    const $input = document.getElementById('q-input');
+    const $form = document.getElementById('search-form');
+
+    function escapeHtml(s) { return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+    function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+
+    function search(q) {
+      const nq = norm(q.trim());
+      if (!nq) return [];
+      return items.filter(i =>
+        norm(i.title).includes(nq) ||
+        norm(i.description).includes(nq) ||
+        norm(i.category).includes(nq)
+      );
+    }
+
+    function render(filtered, query) {
+      if (!query.trim()) {
+        $info.textContent = 'Digite um termo para pesquisar em todos os artigos publicados.';
+        $results.innerHTML = '';
+        $empty.style.display = 'none';
+        return;
+      }
+      $info.textContent = `${filtered.length} resultado${filtered.length === 1 ? '' : 's'} encontrado${filtered.length === 1 ? '' : 's'} para "${query}"`;
+      if (!filtered.length) {
+        $results.innerHTML = '';
+        $empty.style.display = 'block';
+        return;
+      }
+      $empty.style.display = 'none';
+      $results.innerHTML = filtered.map(p => `
+        <article style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;">
+          ${p.heroImage ? `
+            <a href="${blogBase}/${p.slug}" style="display: block; aspect-ratio: 16/9; overflow: hidden;">
+              <img src="${escapeHtml(p.heroImage)}" alt="${escapeHtml(p.title)}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;" />
+            </a>
+          ` : ''}
+          <div style="padding: 20px; display: flex; flex-direction: column; flex: 1;">
+            <div style="font-family: var(--mono); font-size: 0.75rem; color: var(--accent); margin-bottom: 8px; text-transform: uppercase;">
+              ${escapeHtml(p.category)} &bull; ${escapeHtml(p.pubDate)}
+            </div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 8px; line-height: 1.4;">
+              <a href="${blogBase}/${p.slug}" style="color: var(--ink); text-decoration: none;">
+                ${escapeHtml(p.title)}
+              </a>
+            </h3>
+            <p style="font-size: 0.88rem; color: var(--muted); line-height: 1.5; margin: 0 0 16px; flex: 1;">
+              ${escapeHtml(p.description)}
+            </p>
+            <a href="${blogBase}/${p.slug}" style="font-size: 0.85rem; font-weight: 600; color: var(--accent); text-decoration: none;">
+              Ler ensaio &rarr;
+            </a>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    const params = new URLSearchParams(location.search);
+    const initialQ = params.get('q') || '';
+    $input.value = initialQ;
+    render(search(initialQ), initialQ);
+
+    $form.addEventListener('submit', e => {
+      e.preventDefault();
+      const q = $input.value;
+      const url = new URL(location.href);
+      url.searchParams.set('q', q);
+      history.replaceState(null, '', url);
+      render(search(q), q);
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  @media (min-width: 992px) {
+    .search-grid {
+      grid-template-columns: 2fr 1fr !important;
+    }
+  }
+</style>

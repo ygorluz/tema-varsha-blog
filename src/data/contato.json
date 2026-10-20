@@ -1,0 +1,18 @@
+{
+    "seo": {
+        "title": "Fale com o Varsha Editorial",
+        "description": "Entre em contato com a redação do Varsha para sugestões de ensaios, correções técnicas ou parcerias.",
+        "image": ""
+    },
+    "hero": {
+        "title": "Contato & Comunicação Editorial",
+        "subtitle": "Tem uma sugestão de pauta técnica, deseja contribuir com um ensaio ou propor uma parceria institucional? Nossa equipe editorial responderá em até 48 horas úteis."
+    },
+    "cards": {
+        "napTitle": "Canais Oficiais",
+        "addressLabel": "Escritório",
+        "phoneLabel": "Linha Direta",
+        "emailLabel": "Tempo de resposta: até 48h",
+        "formSubmitText": "Enviar Mensagem"
+    }
+}

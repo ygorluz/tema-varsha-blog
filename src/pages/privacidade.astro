@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { readData } from '../lib/readData';
+const privacyData = readData('privacy.json');
+---
+
+<BaseLayout
+  title={privacyData.title || "Política de Privacidade"}
+  description={`Leia nossa ${privacyData.title?.toLowerCase() || 'política de privacidade'} e proteção de dados.`}
+>
+  <main class="content-shell" style="padding-top: 48px; padding-bottom: 80px;">
+    
+    <!-- Header -->
+    <div style="margin-bottom: 40px; border-bottom: 1px solid var(--line); padding-bottom: 24px;">
+      <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--muted); margin-bottom: 8px;">
+        <a href="/" style="color: var(--muted); text-decoration: none;">Início</a> &sol; <span style="color: var(--ink);">Privacidade</span>
+      </div>
+      <h1 style="font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 800; color: var(--ink); margin: 0 0 16px; letter-spacing: -0.03em;">
+        {privacyData.title || "Política de Privacidade"}
+      </h1>
+      {privacyData.lastUpdated && (
+        <div style="font-family: var(--mono); font-size: 0.85rem; color: var(--muted);">
+          Última atualização: {privacyData.lastUpdated}
+        </div>
+      )}
+    </div>
+
+    <!-- Main Grid -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 48px; align-items: start;" class="legal-grid">
+      <div style="min-width: 0;">
+        <div style="background: var(--bg-elevated); border: 1px solid var(--line); border-radius: 8px; padding: 32px 36px; display: flex; flex-direction: column; gap: 28px;">
+          {privacyData.content?.map((section: any) => (
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--ink); margin: 0 0 10px; letter-spacing: -0.01em;">
+                {section.title}
+              </h2>
+              <p style="font-size: 0.98rem; color: var(--muted); line-height: 1.7; margin: 0;">
+                {section.text}
+              </p>
+            </div>
+          ))}
+
+          <div style="border-top: 1px solid var(--line); padding-top: 20px; font-size: 0.9rem; color: var(--muted);">
+            Em caso de dúvidas sobre nossos termos ou privacidade de dados, você pode <a href="/contato" style="color: var(--accent); font-weight: 600; text-decoration: none;">entrar em contato conosco</a>.
+          </div>
+        </div>
+      </div>
+
+      <Sidebar />
+    </div>
+
+  </main>
+</BaseLayout>
+
+<style>
+  @media (min-width: 992px) {
+    .legal-grid {
+      grid-template-columns: 2fr 1fr !important;
+    }
+  }
+</style>
