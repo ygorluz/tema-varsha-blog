@@ -170,7 +170,7 @@ const siteSocial = siteConfig.social || {};
 
     {/* Editorial Footer */}
     <footer class="site-footer" style="border-top: 1px solid var(--line); padding: 56px 0 32px; margin-top: 80px; background: var(--bg-elevated);">
-      <div class="content-shell" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-bottom: 40px;">
+      <div class="content-shell" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; margin-bottom: 40px; padding-bottom: 0;">
         <div>
           <h4 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 12px; color: var(--ink); letter-spacing: -0.01em;">{siteName}</h4>
           <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin: 0 0 16px;">
@@ -203,7 +203,7 @@ const siteSocial = siteConfig.social || {};
           </ul>
         </div>
       </div>
-      <div class="content-shell" style="border-top: 1px solid var(--line); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div class="content-shell" style="border-top: 1px solid var(--line); padding-top: 24px; padding-bottom: 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <p style="font-size: 0.85rem; color: var(--muted-2); margin: 0;">
           {siteConfig.footer?.copyright || `© ${new Date().getFullYear()} ${siteName}. Todos os direitos reservados.`}
         </p>

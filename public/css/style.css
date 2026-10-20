@@ -2477,7 +2477,7 @@ td:last-child {
     }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
     .nav {
         padding-inline: 1rem;
     }
@@ -2784,13 +2784,21 @@ td:last-child {
 }
 
 .content-shell {
+    max-width: var(--max, 1160px);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(1rem, 3.5vw, 2rem);
+    padding-right: clamp(1rem, 3.5vw, 2rem);
     padding-bottom: 5rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .page-hero {
-    max-width: var(--max);
+    max-width: var(--max, 1160px);
     margin: 0 auto;
-    padding: 5rem 1.25rem 2.25rem;
+    padding: 3.5rem 0 2rem;
+    width: 100%;
 }
 
 .page-hero-compact {
@@ -2798,21 +2806,23 @@ td:last-child {
 }
 
 .page-hero h1 {
-    max-width: 14ch;
+    max-width: 100%;
     margin: 0;
     color: var(--ink);
-    font-size: clamp(2.8rem, 7vw, 6rem);
-    line-height: 0.92;
-    letter-spacing: -0.07em;
+    font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+    line-height: 1.12;
+    letter-spacing: -0.04em;
+    word-break: break-word;
 }
 
 .article-header h1 {
-    max-width: 22ch;
+    max-width: 100%;
     margin: 0;
     color: var(--ink);
-    font-size: clamp(2rem, 4vw, 3.4rem);
-    line-height: 1;
-    letter-spacing: -0.055em;
+    font-size: clamp(1.85rem, 4.2vw, 3rem);
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    word-break: break-word;
 }
 
 .page-hero .hero-lede {
@@ -2962,10 +2972,13 @@ td:last-child {
 .article-layout {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(8rem, 12rem) minmax(0, 860px);
-    gap: clamp(2rem, 6vw, 4rem);
+    grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
     align-items: start;
-    padding-top: 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    padding-top: 2rem;
 }
 
 .article-shell {
@@ -3288,11 +3301,22 @@ td:last-child {
 @media (max-width: 1040px) {
     .article-layout {
         display: block;
-        max-width: 860px;
+        max-width: 780px;
+        margin: 0 auto;
+        width: 100%;
     }
 
     .article-toc {
         display: none;
+    }
+}
+
+@media (max-width: 580px) {
+    .author-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.25rem;
     }
 }
 

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BlogCard from '../components/varsha/BlogCard.astro';
-import AuthorCard from '../components/varsha/AuthorCard.astro';
 import PostSchemaPlugins from '../plugins/_slots/PostSchemaPlugins.astro';
 import PostBottomPlugins from '../plugins/_slots/PostBottomPlugins.astro';
 import PostAfterPlugins from '../plugins/_slots/PostAfterPlugins.astro';
@@ -23,7 +22,7 @@ const { Content, headings } = await render(post);
 const sectionHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
 
 const authorsData = readData('authors.json', []);
-const currentAuthor = authorsData.find((a: any) => a.id === post.data.author) || authorsData[0] || {
+const currentAuthor = authorsData.find((a: any) => a.id === post.data.author || a.name === post.data.author) || authorsData[0] || {
   name: 'Redação Varsha',
   role: 'Equipe Editorial',
   avatar: '/assets/author-yethikrishna.png',
@@ -68,10 +67,10 @@ const relatedPosts = allPosts
     category={post.data.category}
   />
 
-  <main class="content-shell" style="padding-top: 32px;">
+  <main class="content-shell" style="padding-top: 2rem;">
     
-    {/* Breadcrumbs */}
-    <nav style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); margin-bottom: 24px;">
+    <!-- Breadcrumb -->
+    <nav style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); margin-bottom: 24px; flex-wrap: wrap;">
       <a href="/" style="color: var(--muted); text-decoration: none;">Início</a>
       <span>/</span>
       <a href="/blog" style="color: var(--muted); text-decoration: none;">Blog</a>
@@ -85,134 +84,187 @@ const relatedPosts = allPosts
       )}
     </nav>
 
-    {/* Article Layout with Sidebar TOC */}
-    <div class="article-layout section" style="padding: 0; display: grid; grid-template-columns: 1fr; gap: 48px;">
+    <!-- Article Layout with Optional TOC Sidebar -->
+    <div class={`article-layout ${sectionHeadings.length === 0 ? 'article-layout--single' : ''}`}>
       
-      <div style="display: grid; grid-template-columns: 1fr; gap: 48px;" class="article-grid">
-        
-        {/* Article Core */}
-        <article class="article-shell" style="max-width: 100%;">
-          
-          <header class="article-header" style="margin-bottom: 36px;">
-            <p class="post-meta" style="display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--muted); margin-bottom: 16px;">
-              <time datetime={pubDate.toISOString()}>{dateFormatted}</time>
-              <span>·</span>
-              <span>{readingTime} min de leitura</span>
-            </p>
-
-            <h1 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.2; letter-spacing: -0.025em; color: var(--ink); margin: 0 0 16px;">
-              {post.data.title}
-            </h1>
-
-            {post.data.description && (
-              <p style="font-size: 1.15rem; color: var(--muted); line-height: 1.6; margin: 0 0 28px;">
-                {post.data.description}
-              </p>
-            )}
-
-            {/* Hero Image */}
-            {post.data.heroImage && (
-              <div style="border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line); margin-bottom: 36px; background: var(--bg-elevated); aspect-ratio: 16 / 9;">
-                <img
-                  src={post.data.heroImage}
-                  alt={post.data.title}
-                  style="width: 100%; height: 100%; object-fit: cover;"
-                />
-              </div>
-            )}
-          </header>
-
-          {/* Social Share Plugin */}
-          <div style="margin-bottom: 32px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
-            <SocialShare title={post.data.title} url={postUrl} />
-          </div>
-
-          {/* Prose Content */}
-          <div class="article-prose" style="font-size: 1.08rem; line-height: 1.8; color: var(--ink-soft);">
-            <Content />
-          </div>
-
-          {/* Plugins: Bottom & After Content */}
-          <PostBottomPlugins />
-
-          {/* Author Card */}
-          <div style="margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--line);">
-            <aside class="author-card" aria-label="Sobre o autor">
-              <img
-                class="author-photo"
-                src={currentAuthor.avatar || '/assets/author-yethikrishna.png'}
-                width="72"
-                height="72"
-                alt={currentAuthor.name}
-                loading="lazy"
-                decoding="async"
-              />
-              <div class="author-body">
-                <p class="author-name">{currentAuthor.name}</p>
-                <p class="author-role">{currentAuthor.role}</p>
-                {currentAuthor.bio && (
-                  <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin: 6px 0 12px;">
-                    {currentAuthor.bio}
-                  </p>
-                )}
-                <div class="author-links">
-                  {currentAuthor.instagram && (
-                    <a href={currentAuthor.instagram} target="_blank" rel="noopener noreferrer">
-                      <span>Instagram</span>
-                    </a>
-                  )}
-                  {currentAuthor.email && (
-                    <a href={`mailto:${currentAuthor.email}`}>
-                      <span>Email</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            </aside>
-          </div>
-
-          <PostAfterPlugins />
-        </article>
-
-      </div>
-
-      {/* Related Posts */}
-      {relatedPosts.length > 0 && (
-        <section style="margin-top: 80px; padding-top: 48px; border-top: 1px solid var(--line);">
-          <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--ink); margin: 0 0 24px; letter-spacing: -0.02em;">
-            Artigos Relacionados
-          </h3>
-          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
-            {relatedPosts.map(p => (
-              <BlogCard post={p} />
+      {sectionHeadings.length > 0 && (
+        <aside class="article-toc" aria-label="Tópicos do Artigo">
+          <p>Tópicos</p>
+          <nav>
+            {sectionHeadings.map(h => (
+              <a href={`#${h.slug}`} data-heading-link={h.slug}>{h.text}</a>
             ))}
-          </div>
-        </section>
+          </nav>
+        </aside>
       )}
 
+      <!-- Article Shell -->
+      <article class="article-shell" style="width: 100%; min-width: 0;">
+        
+        <header class="article-header" style="margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--line);">
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); margin-bottom: 16px; flex-wrap: wrap;">
+            <time datetime={pubDate.toISOString()}>{dateFormatted}</time>
+            <span>·</span>
+            <span>{readingTime} min de leitura</span>
+            {post.data.category && (
+              <>
+                <span>·</span>
+                <span style="color: var(--accent); font-weight: 600;">{post.data.category}</span>
+              </>
+            )}
+          </div>
+
+          <h1 style="font-size: clamp(1.85rem, 4vw, 2.85rem); font-weight: 800; line-height: 1.2; letter-spacing: -0.025em; color: var(--ink); margin: 0 0 16px; word-break: break-word;">
+            {post.data.title}
+          </h1>
+
+          {post.data.description && (
+            <p style="font-size: 1.15rem; color: var(--muted); line-height: 1.6; margin: 0 0 28px;">
+              {post.data.description}
+            </p>
+          )}
+
+          {post.data.heroImage && (
+            <div style="border-radius: var(--radius-lg, 8px); overflow: hidden; border: 1px solid var(--line); margin-bottom: 24px; background: var(--bg-elevated); max-height: 480px;">
+              <img
+                src={post.data.heroImage}
+                alt={post.data.title}
+                style="width: 100%; max-height: 480px; object-fit: cover; display: block;"
+              />
+            </div>
+          )}
+        </header>
+
+        <!-- Social Share Plugin -->
+        <div style="margin-bottom: 32px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+          <SocialShare title={post.data.title} url={postUrl} />
+        </div>
+
+        <!-- Prose Content -->
+        <div class="article-prose" style="font-size: 1.08rem; line-height: 1.8; color: var(--ink-soft); overflow-wrap: break-word; word-break: break-word;">
+          <Content />
+        </div>
+
+        <!-- Plugins Slot: Bottom -->
+        <PostBottomPlugins />
+
+        <!-- Author Card -->
+        <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line);">
+          <aside class="author-card" aria-label="Sobre o autor">
+            <img
+              class="author-photo"
+              src={currentAuthor.avatar || '/assets/author-yethikrishna.png'}
+              width="72"
+              height="72"
+              alt={currentAuthor.name}
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="author-body">
+              <p class="author-name">{currentAuthor.name}</p>
+              <p class="author-role">{currentAuthor.role}</p>
+              {currentAuthor.bio && (
+                <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.5; margin: 6px 0 12px;">
+                  {currentAuthor.bio}
+                </p>
+              )}
+              <div class="author-links">
+                {currentAuthor.instagram && (
+                  <a href={currentAuthor.instagram} target="_blank" rel="noopener noreferrer">
+                    <span>Instagram</span>
+                  </a>
+                )}
+                {currentAuthor.email && (
+                  <a href={`mailto:${currentAuthor.email}`}>
+                    <span>Email</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Plugins Slot: After Content -->
+        <PostAfterPlugins />
+      </article>
+
     </div>
+
+    <!-- Related Posts -->
+    {relatedPosts.length > 0 && (
+      <section style="margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--line); width: 100%;">
+        <div style="margin-bottom: 24px;">
+          <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent);">
+            Continue lendo
+          </span>
+          <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--ink); margin: 4px 0 0; letter-spacing: -0.02em;">
+            Artigos Relacionados
+          </h3>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 24px;">
+          {relatedPosts.map(p => (
+            <BlogCard post={p} />
+          ))}
+        </div>
+      </section>
+    )}
+
   </main>
+
+  <!-- TOC Active Scroll Observer -->
+  <script>
+    const headings = Array.from(document.querySelectorAll('.article-prose h2, .article-prose h3'));
+    const links = new Map(
+      Array.from(document.querySelectorAll('[data-heading-link]')).map(link => [
+        link.getAttribute('data-heading-link'),
+        link,
+      ])
+    );
+
+    function setActive(id: string) {
+      for (const link of links.values()) link.removeAttribute('aria-current');
+      links.get(id)?.setAttribute('aria-current', 'true');
+    }
+
+    if (headings.length > 0 && links.size > 0) {
+      setActive(headings[0].id);
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter(entry => entry.isIntersecting)
+            .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+          if (visible?.target instanceof HTMLElement && visible.target.id) {
+            setActive(visible.target.id);
+          }
+        },
+        { rootMargin: '-15% 0px -65% 0px', threshold: 0 }
+      );
+      for (const h of headings) observer.observe(h);
+    }
+  </script>
 </BaseLayout>
 
 <style>
   .article-prose :global(h2) {
-    font-size: 1.75rem;
+    font-size: clamp(1.4rem, 3vw, 1.75rem);
     font-weight: 800;
-    margin: 48px 0 16px;
+    margin: 40px 0 16px;
     color: var(--ink);
     letter-spacing: -0.02em;
+    line-height: 1.25;
   }
 
   .article-prose :global(h3) {
-    font-size: 1.35rem;
+    font-size: clamp(1.2rem, 2.5vw, 1.4rem);
     font-weight: 700;
-    margin: 36px 0 14px;
+    margin: 32px 0 12px;
     color: var(--ink);
     letter-spacing: -0.015em;
+    line-height: 1.3;
   }
 
   .article-prose :global(p) {
-    margin: 0 0 24px;
+    margin: 0 0 22px;
   }
 
   .article-prose :global(ul),
@@ -228,18 +280,20 @@ const relatedPosts = allPosts
   .article-prose :global(blockquote) {
     border-left: 3px solid var(--accent);
     padding: 12px 20px;
-    margin: 32px 0;
+    margin: 28px 0;
     background: var(--bg-elevated);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    border-radius: 0 var(--radius-md, 4px) var(--radius-md, 4px) 0;
     font-style: italic;
     color: var(--ink);
   }
 
   .article-prose :global(img) {
     max-width: 100%;
-    border-radius: var(--radius-md);
+    height: auto;
+    border-radius: var(--radius-md, 4px);
     border: 1px solid var(--line);
-    margin: 32px 0;
+    margin: 28px 0;
+    display: block;
   }
 
   .article-prose :global(code) {
@@ -250,16 +304,19 @@ const relatedPosts = allPosts
     padding: 2px 6px;
     border-radius: 4px;
     color: var(--accent);
+    word-break: break-word;
   }
 
   .article-prose :global(pre) {
     background: var(--term-bg, #0c0c0b);
     color: var(--term-text, #dedad0);
     padding: 20px;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-md, 4px);
     overflow-x: auto;
-    margin: 32px 0;
+    margin: 28px 0;
     border: 1px solid var(--line);
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
   }
 
   .article-prose :global(pre code) {
@@ -267,5 +324,13 @@ const relatedPosts = allPosts
     border: none;
     padding: 0;
     color: inherit;
+  }
+
+  .article-prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    display: block;
+    overflow-x: auto;
   }
 </style>
