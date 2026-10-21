@@ -195,9 +195,7 @@ const ogImageUrl = new URL(ogImage, 'https://varsha.myndlabs.tech').toString();
         var saved = localStorage.getItem("varsha-palette") || "";
         var committed = saved || defaultPalette();
 
-        function defaultPalette() {
-          return media.matches ? "tokyo-night" : "tokyo-night-day";
-        }
+        function defaultPalette() { return "tokyo-night"; }
 
         function setPalette(value) {
           document.documentElement.setAttribute("data-palette", value || defaultPalette());
@@ -251,12 +249,7 @@ const ogImageUrl = new URL(ogImage, 'https://varsha.myndlabs.tech').toString();
           closeOverlay();
         }
 
-        media.addEventListener("change", function () {
-          if (!localStorage.getItem("varsha-palette")) {
-            setPalette("");
-            updateUI("");
-          }
-        });
+        // system theme change listener neutralized
 
         options.forEach(function (opt, idx) {
           opt.addEventListener("click", function () { commit(opt.dataset.value); });

@@ -78,7 +78,15 @@ const siteSocial = siteConfig.social || {};
     {/* Palettes Init Script */}
     <script is:inline define:vars={{ defaultPalette }}>
       (function () {
-        var saved = localStorage.getItem("varsha-palette");
+        try {
+          var lastKnown = localStorage.getItem("varsha-default-seen");
+          if (lastKnown !== defaultPalette) {
+            localStorage.removeItem("varsha-palette");
+            sessionStorage.removeItem("varsha-palette");
+            localStorage.setItem("varsha-default-seen", defaultPalette);
+          }
+        } catch (e) {}
+        var saved = sessionStorage.getItem("varsha-palette") || localStorage.getItem("varsha-palette");
         document.documentElement.setAttribute("data-palette", saved || defaultPalette);
       })();
     </script>
@@ -225,17 +233,24 @@ const siteSocial = siteConfig.social || {};
           <button type="button" role="option" data-value="tokyo-night">Tokyo Night</button>
           <button type="button" role="option" data-value="terminal">Terminal Black</button>
           <button type="button" role="option" data-value="catppuccin">Catppuccin Mocha</button>
-          <button type="button" role="option" data-value="varsha">Varsha Classic</button>
           <button type="button" role="option" data-value="dracula">Dracula</button>
           <button type="button" role="option" data-value="nord">Nord</button>
           <button type="button" role="option" data-value="gruvbox">Gruvbox Dark</button>
           <button type="button" role="option" data-value="one-dark">One Dark</button>
           <button type="button" role="option" data-value="solarized">Solarized Dark</button>
+          <button type="button" role="option" data-value="varsha">Varsha Classic</button>
+          <button type="button" role="option" data-value="kanagawa">Kanagawa Wave</button>
+          <button type="button" role="option" data-value="rose-pine">Rosé Pine</button>
+          <button type="button" role="option" data-value="vesper">Vesper</button>
           <div class="theme-sep"><span>Light</span></div>
           <button type="button" role="option" data-value="tokyo-night-day">Tokyo Night Day</button>
           <button type="button" role="option" data-value="catppuccin-latte">Catppuccin Latte</button>
           <button type="button" role="option" data-value="solarized-light">Solarized Light</button>
           <button type="button" role="option" data-value="retro">Retro Paper</button>
+          <button type="button" role="option" data-value="gruvbox-light">Gruvbox Light</button>
+          <button type="button" role="option" data-value="one-light">One Light</button>
+          <button type="button" role="option" data-value="kanagawa-lotus">Kanagawa Lotus</button>
+          <button type="button" role="option" data-value="rose-pine-dawn">Rosé Pine Dawn</button>
         </div>
         <div class="theme-overlay-foot">
           <span class="theme-help"><kbd>↑</kbd><kbd>↓</kbd> navegar <kbd>↵</kbd> escolher <kbd>esc</kbd> fechar</span>
@@ -245,7 +260,7 @@ const siteSocial = siteConfig.social || {};
     </div>
 
     {/* Theme Switcher Script */}
-    <script is:inline>
+    <script is:inline define:vars={{ defaultPalette }}>
       (function () {
         var overlay = document.getElementById("theme-overlay");
         var hint = document.getElementById("theme-hint");
@@ -253,20 +268,17 @@ const siteSocial = siteConfig.social || {};
         var hintLabel = document.getElementById("theme-hint-label");
         if (!overlay || !list) return;
         var options = Array.prototype.slice.call(list.querySelectorAll("[role='option']"));
-        var media = window.matchMedia("(prefers-color-scheme: dark)");
-        var saved = localStorage.getItem("varsha-palette") || "";
-        var committed = saved || defaultPalette();
-
-        function defaultPalette() {
-          return media.matches ? "tokyo-night" : "tokyo-night-day";
-        }
+        var saved = sessionStorage.getItem("varsha-palette") || localStorage.getItem("varsha-palette") || "";
+        var activePalette = saved || defaultPalette;
+        var committed = activePalette;
 
         function setPalette(value) {
-          document.documentElement.setAttribute("data-palette", value || defaultPalette());
+          var target = value || defaultPalette;
+          document.documentElement.setAttribute("data-palette", target);
         }
 
         function updateUI(value) {
-          var activeValue = value || defaultPalette();
+          var activeValue = value || defaultPalette;
           options.forEach(function (opt) {
             opt.setAttribute("aria-selected", String(opt.dataset.value === activeValue));
           });
@@ -277,7 +289,7 @@ const siteSocial = siteConfig.social || {};
         function openOverlay() {
           overlay.hidden = false;
           document.body.style.overflow = "hidden";
-          committed = localStorage.getItem("varsha-palette") || defaultPalette();
+          committed = sessionStorage.getItem("varsha-palette") || localStorage.getItem("varsha-palette") || defaultPalette;
           updateUI(committed);
           var active = list.querySelector("[aria-selected='true']") || options[0];
           if (active) active.focus();
@@ -302,6 +314,7 @@ const siteSocial = siteConfig.social || {};
 
         function commit(value) {
           setPalette(value);
+          sessionStorage.setItem("varsha-palette", value);
           localStorage.setItem("varsha-palette", value);
           updateUI(value);
           closeOverlay();
@@ -345,8 +358,9 @@ const siteSocial = siteConfig.social || {};
 
         var closeBtn = document.getElementById("theme-close-btn");
         if (closeBtn) closeBtn.addEventListener("click", revert);
-        setPalette(saved);
-        updateUI(saved);
+
+        setPalette(activePalette);
+        updateUI(activePalette);
       })();
     </script>
 
