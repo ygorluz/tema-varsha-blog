@@ -76,13 +76,10 @@ const siteSocial = siteConfig.social || {};
     <link rel="preload" href="/assets/jbm.woff2" as="font" type="font/woff2" crossorigin />
 
     {/* Palettes Init Script */}
-    <script is:inline>
+    <script is:inline define:vars={{ defaultPalette }}>
       (function () {
         var saved = localStorage.getItem("varsha-palette");
-        var system = window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "tokyo-night"
-          : "tokyo-night-day";
-        document.documentElement.setAttribute("data-palette", saved || system);
+        document.documentElement.setAttribute("data-palette", saved || defaultPalette);
       })();
     </script>
 
@@ -207,9 +204,7 @@ const siteSocial = siteConfig.social || {};
         <p style="font-size: 0.85rem; color: var(--muted-2); margin: 0;">
           {siteConfig.footer?.copyright || `© ${new Date().getFullYear()} ${siteName}. Todos os direitos reservados.`}
         </p>
-        <div style="font-size: 0.85rem; color: var(--muted-2);">
-          Publicado com <a href="https://meusitecomia.com" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none; font-weight: 600;">IA 2.0</a>
-        </div>
+        
       </div>
     </footer>
 

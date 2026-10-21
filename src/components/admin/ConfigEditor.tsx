@@ -1,3 +1,27 @@
+
+const VARSHA_PALETTES = [
+    { id: 'tokyo-night', name: 'Tokyo Night', mode: 'dark', bg: '#1a1b26', accent: '#7aa2f7' },
+    { id: 'terminal', name: 'Terminal Black', mode: 'dark', bg: '#000000', accent: '#4a9eff' },
+    { id: 'catppuccin', name: 'Catppuccin Mocha', mode: 'dark', bg: '#1e1e2e', accent: '#cba6f7' },
+    { id: 'dracula', name: 'Dracula', mode: 'dark', bg: '#282a36', accent: '#bd93f9' },
+    { id: 'nord', name: 'Nord', mode: 'dark', bg: '#2e3440', accent: '#88c0d0' },
+    { id: 'gruvbox', name: 'Gruvbox Dark', mode: 'dark', bg: '#282828', accent: '#d79921' },
+    { id: 'one-dark', name: 'One Dark', mode: 'dark', bg: '#282c34', accent: '#61afef' },
+    { id: 'solarized', name: 'Solarized Dark', mode: 'dark', bg: '#002b36', accent: '#56a1d3' },
+    { id: 'varsha', name: 'Varsha Classic', mode: 'dark', bg: '#0d1117', accent: '#58a6ff' },
+    { id: 'kanagawa', name: 'Kanagawa Wave', mode: 'dark', bg: '#1f1f28', accent: '#7e9cd8' },
+    { id: 'rose-pine', name: 'Rosé Pine', mode: 'dark', bg: '#191724', accent: '#c4a7e7' },
+    { id: 'vesper', name: 'Vesper', mode: 'dark', bg: '#101010', accent: '#ffc799' },
+    { id: 'tokyo-night-day', name: 'Tokyo Night Day', mode: 'light', bg: '#e1e2e7', accent: '#285cb2' },
+    { id: 'catppuccin-latte', name: 'Catppuccin Latte', mode: 'light', bg: '#eff1f5', accent: '#8839ef' },
+    { id: 'solarized-light', name: 'Solarized Light', mode: 'light', bg: '#fdf6e3', accent: '#1b6c9e' },
+    { id: 'retro', name: 'Retro Paper', mode: 'light', bg: '#f4eee0', accent: '#d9534f' },
+    { id: 'gruvbox-light', name: 'Gruvbox Light', mode: 'light', bg: '#fbf1c7', accent: '#076678' },
+    { id: 'one-light', name: 'One Light', mode: 'light', bg: '#fafafa', accent: '#3b6ad2' },
+    { id: 'kanagawa-lotus', name: 'Kanagawa Lotus', mode: 'light', bg: '#f2ecbc', accent: '#48608d' },
+    { id: 'rose-pine-dawn', name: 'Rosé Pine Dawn', mode: 'light', bg: '#faf4ed', accent: '#736289' },
+];
+
 import React, { useState, useEffect } from 'react';
 import { Save, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
 import { triggerToast } from './CmsToaster';
@@ -212,6 +236,100 @@ export default function ConfigEditor() {
                                 </div>
                             </div>
                         )}
+                        
+                        {/* Paleta Padrão do Tema Varsha */}
+                        <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <label className="text-sm font-bold text-slate-800 block">Paleta de Cores Inicial (Tema Varsha)</label>
+                                    <p className="text-xs text-slate-500">Defina a cor padrão que o site abrirá para qualquer visitante.</p>
+                                </div>
+                                <span className="px-2.5 py-1 text-xs font-mono font-bold rounded-lg bg-violet-100 text-violet-700">
+                                    {config?.theme?.palette || 'tokyo-night'}
+                                </span>
+                            </div>
+
+                            <div className="space-y-3">
+                                <div>
+                                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Modo Escuro (Dark)</span>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                                        {VARSHA_PALETTES.filter(p => p.mode === 'dark').map(p => {
+                                            const isSelected = (config?.theme?.palette || 'tokyo-night') === p.id;
+                                            return (
+                                                <button
+                                                    key={p.id}
+                                                    type="button"
+                                                    onClick={() => setConfig({
+                                                        ...config,
+                                                        theme: {
+                                                            ...config.theme,
+                                                            palette: p.id,
+                                                            primary: p.accent,
+                                                            accent: p.accent
+                                                        }
+                                                    })}
+                                                    className={`flex items-center gap-2.5 p-2 rounded-xl text-left border transition-all ${
+                                                        isSelected
+                                                            ? 'bg-white border-violet-600 ring-2 ring-violet-500/20 shadow-xs'
+                                                            : 'bg-white/80 border-slate-200 hover:border-slate-300 hover:bg-white'
+                                                    }`}
+                                                >
+                                                    <span
+                                                        className="w-5 h-5 rounded-lg border border-black/10 shrink-0 shadow-xs flex items-center justify-center"
+                                                        style={{ background: p.bg }}
+                                                    >
+                                                        <span className="w-2 h-2 rounded-full" style={{ background: p.accent }} />
+                                                    </span>
+                                                    <span className={`text-xs font-semibold truncate ${isSelected ? 'text-violet-700' : 'text-slate-700'}`}>
+                                                        {p.name}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Modo Claro (Light)</span>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                                        {VARSHA_PALETTES.filter(p => p.mode === 'light').map(p => {
+                                            const isSelected = (config?.theme?.palette || 'tokyo-night') === p.id;
+                                            return (
+                                                <button
+                                                    key={p.id}
+                                                    type="button"
+                                                    onClick={() => setConfig({
+                                                        ...config,
+                                                        theme: {
+                                                            ...config.theme,
+                                                            palette: p.id,
+                                                            primary: p.accent,
+                                                            accent: p.accent
+                                                        }
+                                                    })}
+                                                    className={`flex items-center gap-2.5 p-2 rounded-xl text-left border transition-all ${
+                                                        isSelected
+                                                            ? 'bg-white border-violet-600 ring-2 ring-violet-500/20 shadow-xs'
+                                                            : 'bg-white/80 border-slate-200 hover:border-slate-300 hover:bg-white'
+                                                    }`}
+                                                >
+                                                    <span
+                                                        className="w-5 h-5 rounded-lg border border-black/10 shrink-0 shadow-xs flex items-center justify-center"
+                                                        style={{ background: p.bg }}
+                                                    >
+                                                        <span className="w-2 h-2 rounded-full" style={{ background: p.accent }} />
+                                                    </span>
+                                                    <span className={`text-xs font-semibold truncate ${isSelected ? 'text-violet-700' : 'text-slate-700'}`}>
+                                                        {p.name}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div>
                             <label className={labelClass}>Combinação de Fontes</label>
                             <select value={config?.theme?.font || 'outfit'} onChange={e => setConfig({ ...config, theme: { ...config.theme, font: e.target.value } })} className={inputClass}>
